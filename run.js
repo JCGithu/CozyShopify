@@ -1,5 +1,5 @@
 // const socket = io("ws://localhost:3000");
-//const socket = io("https://shopifyreciever.up.railway.app/");
+const socket = io("https://shopifyreciever.up.railway.app/");
 let popupTime = 10;
 let colours = ['#f9e9e7', '#a5c1da', '#ECB177', '#6F9847', '#57898A'];
 
@@ -49,12 +49,7 @@ class Queue {
     showPopUp(this.list[0]);
     this.ditch();
     setTimeout(()=>{
-      console.log('times up');
-      if (this.check){
-        this.run();
-      } else {
-        this.running=false;
-      } 
+      this.check ? this.run() : this.running=false;
     }, popupTime * 1000 )
   }
   add(pop){
@@ -104,26 +99,26 @@ const images = {
   'Pls Like & Subscribe Embroidered T-Shirt':'subscribeshirt.png'
 }
 
-for (let i = 0; i < 10; i++){
-  let imgLength = Object.keys(images)
-  let target = getRandom(imgLength.length);  
-  popUpQueue.add({title:imgLength[target], img: images[imgLength[target]]});
-}
+// for (let i = 0; i < 10; i++){
+//   let imgLength = Object.keys(images)
+//   let target = getRandom(imgLength.length);  
+//   popUpQueue.add({title:imgLength[target], img: images[imgLength[target]]});
+// }
 
-// receive a message from the server
-// socket.on("message", msg => {
-//   console.log(msg);
-// });
+//receive a message from the server
+socket.on("message", msg => {
+  console.log(msg);
+});
 
-// socket.on("LoginRequest", msg => {
-//   console.log('Login requested');
-//   socket.emit("set-store", 'cozyaf');
-// });
+socket.on("LoginRequest", msg => {
+  console.log('Login requested');
+  socket.emit("set-store", 'cozyaf');
+});
 
-// // recieve a sale
-// socket.on("sale", item => {
-//   console.log(item);
-//   if (images.hasOwnProperty(item.title)) {
-//     popUpQueue.push({title: item.title, img: images[item.title]})
-//   }
-// });
+// recieve a sale
+socket.on("sale", item => {
+  console.log(item);
+  if (images.hasOwnProperty(item.title)) {
+    popUpQueue.push({title: item.title, img: images[item.title]})
+  }
+});
